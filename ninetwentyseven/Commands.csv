@@ -1,0 +1,6 @@
+Query
+SELECT section FROM teammembers where student_name = 'Sergio Gracia';
+SELECT section FROM teammembers where student_name = 'Panzer Kamper';
+Update
+CREATE TABLE TEST3(Age integer,Gender text,Occupation text,Rec_Vector float8[][],Watched_Movies text[],Favorite_Actors text[], id integer, PRIMARY KEY(id));
+CREATE TABLE TEST4(Age integer,Gender text,Occupation text,Rec_Vector float8[][],Watched_Movies text[],Favorite_Actors text[], id integer, PRIMARY KEY(id));
