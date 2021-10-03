@@ -1,0 +1,6 @@
+Update
+SET CLIENT_ENCODING TO 'utf8';
+Query
+SELECT directors FROM crew WHERE titleID = 'tt0000420';
+SELECT name FROM names WHERE nconst = 'nm0000045';
+etc, etc, etc, just come up with 20 checks like these
