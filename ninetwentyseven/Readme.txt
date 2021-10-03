@@ -1,9 +1,15 @@
-To use: First run populate_name_tables_fast.py
+To use: First run the python file you want to populate (names, principals, ratings or crew)
+  populate_name_tables_fast.py
+  populate_principals_tables_fast.py
+  populate_rating_tables_fast.py
+  populate_title_tables_fast.py
+  populate_crew.py
 
 Then to populate database, run java
 Compile and run by doing:
 javac jdbcpostgreSQL.java
 java -cp ".;postgresql-42.2.8.jar" jdbcpostgreSQL
+In Ubuntu: java -cp ".:postgresql-42.2.8.jar" jdbcpostgreSQL
 
 test.csv syntax:
 separate sql commands with newlines
