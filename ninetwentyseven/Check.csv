@@ -2,5 +2,25 @@ Update
 SET CLIENT_ENCODING TO 'utf8';
 Query
 SELECT directors FROM crew WHERE titleID = 'tt0000420';
-SELECT name FROM names WHERE nconst = 'nm0000045';
-etc, etc, etc, just come up with 20 checks like these
+SELECT primaryName FROM names WHERE nconst = 'nm0000045';
+SELECT titleId FROM crew WHERE directors = 'nm0088881';
+SELECT rating FROM customer_ratings WHERE titleId = 'tt0389605';
+SELECT customerId FROM customer_ratings WHERE rating = 2;
+SELECT titleId FROM customer_ratings WHERE reviewId IN (2450433, 551208, 1301819, 2291306, 2541025);
+SELECT nconst FROM names WHERE birthYear < 1900;
+SELECT primaryName FROM names WHERE primaryProfession = 'actor,soundtrack,producer';
+SELECT primaryProfession FROM names WHERE primaryName = 'Henry Mancini';
+SELECT titleID FROM principals WHERE category = 'actress';
+SELECT titleID FROM principals WHERE nconst = 'nm0001908';
+SELECT nconst FROM principals WHERE job = 'writer';
+SELECT originalTitle FROM titles WHERE averageRating > 7;
+SELECT titleType FROM titles WHERE runtimeMinutes < 25 ;
+SELECT titleId FROM titles WHERE titleType = 'Thriller';
+SELECT nconst FROM names WHERE deathYear > 2000 ;
+SELECT primaryProfession FROM names WHERE birthYear < 1930 ;
+SELECT reviewId FROM customer_ratings WHERE titleId = 'tt4719758';
+SELECT rating FROM customer_ratings WHERE titleID = 'tt4719758';
+SELECT averageRating FROM titles WHERE runtimeMinutes > 100;
+SELECT titleId FROM titles WHERE averageRating = 9.7;
+SELECT writers FROM crew WHERE titleID = 'tt0012538';
+SELECT category FROM principals WHERE job = 'play';
