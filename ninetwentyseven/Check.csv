@@ -1,6 +1,13 @@
 Update
 SET CLIENT_ENCODING TO 'utf8';
 Query
+SELECT customer_ratings.titleId, originalTitle FROM customer_ratings, titles WHERE customer_ratings.titleId = titles.titleId LIMIT 10;
+SELECT reviewId FROM customer_ratings WHERE titleId = 'tt4719758';
+SELECT rating FROM customer_ratings WHERE titleID = 'tt4719758';
+SELECT averageRating FROM titles WHERE runtimeMinutes > 100;
+SELECT titleId FROM titles WHERE averageRating = 9.7;
+SELECT writers FROM crew WHERE titleID = 'tt0012538';
+SELECT category FROM principals WHERE job = 'play';
 SELECT directors FROM crew WHERE titleID = 'tt0000420';
 SELECT primaryName FROM names WHERE nconst = 'nm0000045';
 SELECT titleId FROM crew WHERE directors = 'nm0088881';
@@ -17,10 +24,7 @@ SELECT originalTitle FROM titles WHERE averageRating > 7;
 SELECT titleType FROM titles WHERE runtimeMinutes < 25 ;
 SELECT titleId FROM titles WHERE titleType = 'Thriller';
 SELECT nconst FROM names WHERE deathYear > 2000 ;
-SELECT primaryProfession FROM names WHERE birthYear < 1930 ;
-SELECT reviewId FROM customer_ratings WHERE titleId = 'tt4719758';
-SELECT rating FROM customer_ratings WHERE titleID = 'tt4719758';
-SELECT averageRating FROM titles WHERE runtimeMinutes > 100;
-SELECT titleId FROM titles WHERE averageRating = 9.7;
-SELECT writers FROM crew WHERE titleID = 'tt0012538';
-SELECT category FROM principals WHERE job = 'play';
+SELECT reviewId FROM customer_ratings WHERE titleId = 'tt4719758' LIMIT 10;
+SELECT averageRating FROM titles WHERE runtimeMinutes > 100 LIMIT 10;
+SELECT titleId FROM titles WHERE averageRating = 9.7 LIMIT 10;
+SELECT titleID FROM principals WHERE category = 'actress' LIMIT 10;
