@@ -11,6 +11,11 @@ javac jdbcpostgreSQL.java
 java -cp ".;postgresql-42.2.8.jar" jdbcpostgreSQL
 In Ubuntu: java -cp ".:postgresql-42.2.8.jar" jdbcpostgreSQL
 
+To run the demo check
+java -cp ".:postgresql-42.2.8.jar" jdbcpostgreSQL_check
+This java file has already been compiled to a class and its code is identical to jdbcpostgreSQL except that it reads from check.csv instead of test.csv. 
+Check.csv consists of manually written demo commands, and has no associated python script.
+
 test.csv syntax:
 separate sql commands with newlines
 modes for running each line are Query or Update. There is no default mode, must switch to one or the other on the first line
