@@ -2,6 +2,7 @@ import java.sql.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.border.TitledBorder;
 
 public class AnalystGUI extends JFrame implements ActionListener{    
     static JFrame f;    
@@ -79,29 +80,63 @@ public class AnalystGUI extends JFrame implements ActionListener{
 
         // Panels
         main_panel = new JPanel(); // main panel
-        main_panel.setLayout(new GridLayout(3, 1));
+        main_panel.setLayout(new GridLayout(1, 3));
         main_panel.add(new JLabel("Main Panel"));
         main_panel.setBackground(Color.white);
         main_panel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 
-        most_watched = new JPanel(); // sub-panel 1
-        most_watched.add(new JLabel("Most Watched"));
+        // Most watched movie
+        most_watched = new JPanel();
+        TitledBorder title_most_watched = new TitledBorder("Most Watched");
+        title_most_watched.setTitleJustification(TitledBorder.CENTER);
+        title_most_watched.setTitlePosition(TitledBorder.TOP);
+        /* List of movies*/
+        DefaultListModel<String> l1 = new DefaultListModel<>();  
+        l1.addElement("MOST WATCHED"); 
+        l1.addElement("Item1");  
+        l1.addElement("Item2");  
+        l1.addElement("Item3");  
+        l1.addElement("Item4");  
+        JList<String> most_watchedlist = new JList<>(l1);  
+        most_watchedlist.setBounds(100,100, 75,75);  
 
+        most_watched.add(most_watchedlist);  // Add the list to the movie  
+
+        // Top rated movie
         top_rated = new JPanel(); // sub-panel 2
-        top_rated.add(new JLabel("Top Rated"));
+        DefaultListModel<String> l2 = new DefaultListModel<>();  
+        l2.addElement("TOP RATED"); 
+        l2.addElement("Item1");  
+        l2.addElement("Item2");  
+        l2.addElement("Item3");  
+        l2.addElement("Item4");  
+        JList<String> top_ratedlist = new JList<>(l2);  
+        top_ratedlist.setBounds(100,100, 75,75);  
 
+        top_rated.add(top_ratedlist);
+
+        //Statistics
         data_stats = new JPanel(); // sub-panel 3
-        data_stats.add(new JLabel("Statistics"));
+        DefaultListModel<String> l3 = new DefaultListModel<>();  
+        l3.addElement("STATISTICS"); 
+        l3.addElement("Item1");  
+        l3.addElement("Item2");  
+        l3.addElement("Item3");  
+        l3.addElement("Item4");  
+        JList<String> data_statslist = new JList<>(l3);  
+        data_statslist.setBounds(100,100, 75,75);  
+
+        data_stats.add(data_statslist);
 
         // Add to the main panel
         main_panel.add(most_watched);
         main_panel.add(top_rated);
         main_panel.add(data_stats);
 
-        // Adding everything together
-        f.add(mb);f.add(main_panel);    
+        // Adding everything to the frame
+        f.setLayout(new BorderLayout(50, 15));
+        f.add(mb);f.add(main_panel, BorderLayout.CENTER);    
         f.setJMenuBar(mb);  
-        f.setLayout(null);    
         f.setSize(1200,700);  
         setLocationRelativeTo(null);  
         f.setVisible(true);    
