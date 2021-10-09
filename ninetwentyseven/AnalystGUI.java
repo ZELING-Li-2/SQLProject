@@ -7,7 +7,7 @@ public class AnalystGUI extends JFrame implements ActionListener{
     static JFrame f;    
     JMenuBar mb;    
     JMenu Home, Shows, Movies, Shorts, Videos;    
-    JMenuItem top_10, movie_star, cus_rating, director, writer;  
+    JMenuItem top_show, top_movie, movie_star, show_star, show_cus_rating, movie_cus_rating, movie_director, show_director, movie_writer, show_writer;  
     JButton team_logo, search_button;
     JTextField search_field;
     private JPanel main_panel, buff_field, most_watched, top_rated, data_stats;
@@ -24,18 +24,29 @@ public class AnalystGUI extends JFrame implements ActionListener{
 
          // The menue items (inside the menue list)
         f = new JFrame("ZAS ANALYST GUI");    
-        top_10 = new JMenuItem("Top 10");  
+        top_show = new JMenuItem("Top 10");  
+        show_star = new JMenuItem("By Star");    
+        show_director = new JMenuItem("By director"); 
+        show_cus_rating = new JMenuItem("By rating");    
+        show_writer = new JMenuItem("By Writer"); 
+        // Each content can only have one parent
+        top_movie = new JMenuItem("Top 10");  
         movie_star = new JMenuItem("By Star");    
-        director = new JMenuItem("By director"); 
-        cus_rating = new JMenuItem("By rating");    
-        writer = new JMenuItem("Writer");    
+        movie_director = new JMenuItem("By director"); 
+        movie_cus_rating = new JMenuItem("By rating");    
+        movie_writer = new JMenuItem("By Writer");     
 
         // Add action Listeners
-        top_10.addActionListener(this);    
+        top_movie.addActionListener(this);    
         movie_star.addActionListener(this);    
-        director.addActionListener(this);    
-        cus_rating.addActionListener(this); 
-        writer.addActionListener(this);
+        movie_director.addActionListener(this);    
+        movie_cus_rating.addActionListener(this); 
+        movie_writer.addActionListener(this);
+        top_show.addActionListener(this);    
+        show_star.addActionListener(this);    
+        show_director.addActionListener(this);    
+        show_cus_rating.addActionListener(this); 
+        show_writer.addActionListener(this);
         search_button.addActionListener(this);
         // team_logo.addActionListener(this);    
 
@@ -48,8 +59,8 @@ public class AnalystGUI extends JFrame implements ActionListener{
         Videos = new JMenu("Videos");
 
         // Add menue items to menue lists, and menue list to menue bar
-        Movies.add(top_10);Movies.add(movie_star);Movies.add(director);Movies.add(cus_rating);Movies.add(writer);    
-        Shows.add(top_10);Shows.add(movie_star);Shows.add(director);Shows.add(cus_rating);Shows.add(writer);    
+        Movies.add(top_movie);Movies.add(movie_star);Movies.add(movie_director);Movies.add(movie_cus_rating);Movies.add(movie_writer);    
+        Shows.add(top_show);Shows.add(show_star);Shows.add(show_director);Shows.add(show_cus_rating);Shows.add(show_writer);    
         
         // mb.add(team_logo);
         mb.add(Box.createHorizontalGlue());
