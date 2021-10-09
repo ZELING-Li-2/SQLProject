@@ -10,11 +10,11 @@ nameWrite.write("DROP TABLE IF EXISTS titles;")
 nameWrite.write("\n")
 
 #instantiate_string = "CREATE TABLE titles (titleId text, titleType text, originalTitle text, startYear integer, endYear integer, runtimeMinutes integer, genres text, year integer, averageRating decimal, numVotes integer, PRIMARY KEY (titleId));"
-instantiate_string = "CREATE TABLE titles (titleId text, titleType text, originalTitle text, runtimeMinutes integer, genres text, year integer, averageRating decimal, PRIMARY KEY (titleId));"
+instantiate_string = "CREATE TABLE titles (titleId text, titleType text, originalTitle text, runtimeMinutes integer, genres text, year integer, averageRating decimal, Views integer, PRIMARY KEY (titleId));"
 nameWrite.write(instantiate_string)
 nameWrite.write("\n")
 #nameWrite.write("INSERT INTO titles(titleId,titleType,originalTitle,startYear,endYear,runtimeMinutes,genres,year,averageRating,numVotes) ")
-nameWrite.write("INSERT INTO titles(titleId,titleType,originalTitle,runtimeMinutes,genres,year,averageRating) ")
+nameWrite.write("INSERT INTO titles(titleId,titleType,originalTitle,runtimeMinutes,genres,year,averageRating, Views) ")
 nameWrite.write("Values ")
  
 titlesdict = {}
@@ -110,7 +110,8 @@ for titleId in titlesdict:
     writestring +=  "\'" + originalTitlestring + "\'" + ","# + "\'" + startYearstring + "\'" + "," 
     writestring += "\'" + runtimeMinutesstring + "\'" + ","#"\'" + endYearstring +"\'" + "," + "\'"+ runtimeMinutesstring + "\'" + ","
     writestring += "\'" + genresstring + "\'" + ","
-    writestring += "\'" + yearstring + "\'" +"," + "\'" + averageRatingstring + "\'" + ")" 
+    writestring += "\'" + yearstring + "\'" +"," + "\'" + averageRatingstring + "\'" + ","
+    writestring += "\'" + numVotesstring + "\'" + ")" 
     #writestring += "\'" + numVotesstring + "\'" + ")"
     if (titleId != lastkey):
         writestring += ","
