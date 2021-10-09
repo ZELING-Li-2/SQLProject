@@ -2,152 +2,181 @@ import java.sql.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.awt.*;
+import javax.swing.border.TitledBorder;
 
-/*
-  TODO:
-  1) Change credentials for your own team's database
-  2) Change SQL command to a relevant query that retrieves a small amount of data
-  3) Create a JTextArea object using the queried data
-  4) Add the new object to the JPanel p
-*/
+public class ViewerGUI extends JFrame implements ActionListener{    
+    static JFrame f;    
+    JMenuBar mb;    
+    JMenu Home, Shows, Movies, Shorts, Videos;    
+    JMenuItem top_show, top_movie, movie_star, show_star, show_cus_rating, movie_cus_rating, movie_director, show_director, movie_writer, show_writer;
+    JMenuItem top_short, top_video, short_star, video_star, short_cus_rating, video_cus_rating, short_director, video_director, short_writer, video_writer;
+    JButton team_logo, search_button;
+    JTextField search_field;
+    private JPanel main_panel, buff_field, most_watched, top_rated, data_stats;
 
-public class ViewerGUI extends JFrame implements ActionListener {
-  static JFrame f;    
-  JMenuBar mb;    
-  JMenu Home, Shows, Movies, Shorts, Videos;    
-  JMenuItem Recently_watched, Most_popular, Sort_by_genre, Recently_watched2, Most_popular2, Sort_by_genre2, Recently_watched3, Most_popular3, Sort_by_genre3, Recently_watched4, Most_popular4, Sort_by_genre4, Recently_watched5, Most_popular5, Sort_by_genre5;  
-  JButton team_logo, search_button;
-  JTextField search_field;
-  private JPanel main_panel, buff_field, most_watched, top_rated, data_stats;
+    ViewerGUI(){
+        /* NAVBAR SECTION*/
 
-  ViewerGUI(){
-      /* NAVBAR SECTION*/
+        // Logo and search button
+        // team_logo = new JButton(new ImageIcon("Team_Logo.png"));    
+        // team_logo.setBounds(10,10,10, 4); 
+        search_button = new JButton("Search");
+        search_field = new JTextField("Search Movies/Shows");
+        search_field.setEditable(true);  
 
-      // Logo and search button
-      // team_logo = new JButton(new ImageIcon("Team_Logo.png"));    
-      // team_logo.setBounds(10,10,10, 4); 
-      search_button = new JButton("Search");
-      search_field = new JTextField("Search Movies/Shows");
-      search_field.setEditable(true);  
+         // The menue items (inside the menue list)
+        f = new JFrame("ZAS VIEWER GUI");    
+        //shows
+        top_show = new JMenuItem("Top 10");  
+        show_star = new JMenuItem("By Star");    
+        show_director = new JMenuItem("By director"); 
+        show_cus_rating = new JMenuItem("By rating");    
+        show_writer = new JMenuItem("By Writer"); 
+        // Each content can only have one parent
+        //movies
+        top_movie = new JMenuItem("Top 10");  
+        movie_star = new JMenuItem("By Star");    
+        movie_director = new JMenuItem("By director"); 
+        movie_cus_rating = new JMenuItem("By rating");    
+        movie_writer = new JMenuItem("By Writer");     
+        //short
+        top_short = new JMenuItem("Top 10");  
+        short_star = new JMenuItem("By Star");    
+        short_director = new JMenuItem("By director"); 
+        short_cus_rating = new JMenuItem("By rating");    
+        short_writer = new JMenuItem("By Writer");   
+        //video
+        top_video = new JMenuItem("Top 10");  
+        video_star = new JMenuItem("By Star");    
+        video_director = new JMenuItem("By director"); 
+        video_cus_rating = new JMenuItem("By rating");    
+        video_writer = new JMenuItem("By Writer");    
 
-       // The menue items (inside the menue list)
-      f = new JFrame("ZAS VIEWER GUI");    
-      Recently_watched = new JMenuItem("Recently Watched");  
-      Most_popular = new JMenuItem("Most_popular");    
-      Sort_by_genre = new JMenuItem("Sort_by_genre");     
+        // Add action Listeners
+        //movie
+        top_movie.addActionListener(this);    
+        movie_star.addActionListener(this);    
+        movie_director.addActionListener(this);    
+        movie_cus_rating.addActionListener(this); 
+        movie_writer.addActionListener(this);
+        //show
+        top_show.addActionListener(this);    
+        show_star.addActionListener(this);    
+        show_director.addActionListener(this);    
+        show_cus_rating.addActionListener(this); 
+        show_writer.addActionListener(this);
+        //short
+        top_short.addActionListener(this);    
+        short_star.addActionListener(this);    
+        short_director.addActionListener(this);    
+        short_cus_rating.addActionListener(this); 
+        short_writer.addActionListener(this);
+        //video
+        top_video.addActionListener(this);    
+        video_star.addActionListener(this);    
+        video_director.addActionListener(this);    
+        video_cus_rating.addActionListener(this); 
+        video_writer.addActionListener(this);
+        search_button.addActionListener(this);
+        // team_logo.addActionListener(this);    
 
-      // Add action Listeners
-      Recently_watched.addActionListener(this);    
-      Most_popular.addActionListener(this);    
-      Sort_by_genre.addActionListener(this);    
-      search_button.addActionListener(this);
-      // team_logo.addActionListener(this);    
+        // Menue and contents
+        mb = new JMenuBar();    
+        Home = new JMenu("Home");    
+        Shows = new JMenu("Shows");    
+        Movies = new JMenu("Movies");     
+        Shorts = new JMenu("Shorts");
+        Videos = new JMenu("Videos");
 
-      // Menue and contents
-      mb = new JMenuBar();    
-      Home = new JMenu("Home");    
-      Shows = new JMenu("Shows");    
-      Movies = new JMenu("Movies");     
-      Shorts = new JMenu("Shorts");
-      Videos = new JMenu("Videos");
+        // Add menue items to menue lists, and menue list to menue bar
+        Movies.add(top_movie);Movies.add(movie_star);Movies.add(movie_director);Movies.add(movie_cus_rating);Movies.add(movie_writer);    
+        Shows.add(top_show);Shows.add(show_star);Shows.add(show_director);Shows.add(show_cus_rating);Shows.add(show_writer);    
+        Shorts.add(top_short);Shorts.add(short_star);Shorts.add(short_director);Shorts.add(short_cus_rating);Shorts.add(short_writer);  
+        Videos.add(top_video);Videos.add(video_star);Videos.add(video_director);Videos.add(video_cus_rating);Videos.add(video_writer);  
+        // mb.add(team_logo);
+        mb.add(Box.createHorizontalGlue());
+        mb.add(Home);mb.add(Box.createHorizontalGlue());
+        mb.add(Shows);mb.add(Box.createHorizontalGlue());
+        mb.add(Movies);mb.add(Box.createHorizontalGlue());
+        mb.add(Shorts);mb.add(Box.createHorizontalGlue());
+        mb.add(Videos);mb.add(Box.createHorizontalGlue());
+        mb.add(search_field);mb.add(search_button);  
+        mb.revalidate();
 
-      // Add menue items to menue lists, and menue list to menue bar
-      Recently_watched5 = new JMenuItem("Recently Watched");  
-      Most_popular5 = new JMenuItem("Most_popular");    
-      Sort_by_genre5 = new JMenuItem("Sort_by_genre");     
+        /* MAIN CONTENT SECTION*/
+        buff_field = new JPanel();
+        main_panel = new JPanel();  // Main container
+        // main_panel.setBackground(Color.white);
 
-      // Add action Listeners
-      Recently_watched5.addActionListener(this);    
-      Most_popular5.addActionListener(this);    
-      Sort_by_genre5.addActionListener(this);    
+        // Panels
+        main_panel = new JPanel(); // main panel
+        main_panel.setLayout(new GridLayout(1, 3));
+        main_panel.add(new JLabel("Main Panel"));
+        main_panel.setBackground(Color.white);
+        main_panel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 
-      Home.add(Recently_watched4);Home.add(Most_popular4);Home.add(Sort_by_genre4);  
+        // Most watched movie
+        most_watched = new JPanel();
+        TitledBorder title_most_watched = new TitledBorder("Most Watched");
+        title_most_watched.setTitleJustification(TitledBorder.CENTER);
+        title_most_watched.setTitlePosition(TitledBorder.TOP);
+        /* List of movies*/
+        DefaultListModel<String> l1 = new DefaultListModel<>();  
+        l1.addElement("MOST WATCHED"); 
+        l1.addElement("Item1");  
+        l1.addElement("Item2");  
+        l1.addElement("Item3");  
+        l1.addElement("Item4");  
+        JList<String> most_watchedlist = new JList<>(l1);  
+        most_watchedlist.setBounds(100,100, 75,75);  
 
-      Movies.add(Recently_watched);Movies.add(Most_popular);Movies.add(Sort_by_genre); 
+        most_watched.add(most_watchedlist);  // Add the list to the movie  
 
-      Recently_watched2 = new JMenuItem("Recently Watched");  
-      Most_popular2 = new JMenuItem("Most_popular");    
-      Sort_by_genre2 = new JMenuItem("Sort_by_genre");     
+        // Top rated movie
+        top_rated = new JPanel(); // sub-panel 2
+        DefaultListModel<String> l2 = new DefaultListModel<>();  
+        l2.addElement("TOP RATED"); 
+        l2.addElement("Item1");  
+        l2.addElement("Item2");  
+        l2.addElement("Item3");  
+        l2.addElement("Item4");  
+        JList<String> top_ratedlist = new JList<>(l2);  
+        top_ratedlist.setBounds(100,100, 75,75);  
 
-      // Add action Listeners
-      Recently_watched2.addActionListener(this);    
-      Most_popular2.addActionListener(this);    
-      Sort_by_genre2.addActionListener(this);    
+        top_rated.add(top_ratedlist);
 
-      Shows.add(Recently_watched2);Shows.add(Most_popular2);Shows.add(Sort_by_genre2);  
+        //Statistics
+        data_stats = new JPanel(); // sub-panel 3
+        DefaultListModel<String> l3 = new DefaultListModel<>();  
+        l3.addElement("STATISTICS"); 
+        l3.addElement("Item1");  
+        l3.addElement("Item2");  
+        l3.addElement("Item3");  
+        l3.addElement("Item4");  
+        JList<String> data_statslist = new JList<>(l3);  
+        data_statslist.setBounds(100,100, 75,75);  
 
-      Recently_watched3 = new JMenuItem("Recently Watched");  
-      Most_popular3 = new JMenuItem("Most_popular");    
-      Sort_by_genre3 = new JMenuItem("Sort_by_genre");     
+        data_stats.add(data_statslist);
 
-      // Add action Listeners
-      Recently_watched3.addActionListener(this);    
-      Most_popular3.addActionListener(this);    
-      Sort_by_genre3.addActionListener(this);    
+        // Add to the main panel
+        main_panel.add(most_watched);
+        main_panel.add(top_rated);
+        main_panel.add(data_stats);
 
-      Shorts.add(Recently_watched3);Shorts.add(Most_popular3);Shorts.add(Sort_by_genre3);  
-
-      Recently_watched4 = new JMenuItem("Recently Watched");  
-      Most_popular4 = new JMenuItem("Most_popular");    
-      Sort_by_genre4 = new JMenuItem("Sort_by_genre");     
-
-      // Add action Listeners
-      Recently_watched4.addActionListener(this);    
-      Most_popular4.addActionListener(this);    
-      Sort_by_genre4.addActionListener(this);    
-
-      Videos.add(Recently_watched4);Videos.add(Most_popular4);Videos.add(Sort_by_genre4);  
-      
-      // mb.add(team_logo);
-      mb.add(Box.createHorizontalGlue());
-      mb.add(Home);mb.add(Box.createHorizontalGlue());
-      mb.add(Shows);mb.add(Box.createHorizontalGlue());
-      mb.add(Movies);mb.add(Box.createHorizontalGlue());
-      mb.add(Shorts);mb.add(Box.createHorizontalGlue());
-      mb.add(Videos);mb.add(Box.createHorizontalGlue());
-      mb.add(search_field);mb.add(search_button);  
-      mb.revalidate();
-
-      /* MAIN CONTENT SECTION*/
-      buff_field = new JPanel();
-      main_panel = new JPanel();  // Main container
-      // main_panel.setBackground(Color.white);
-
-      // Panels
-      main_panel = new JPanel(); // main panel
-      main_panel.setLayout(new GridLayout(3, 1));
-      main_panel.add(new JLabel("Main Panel"));
-      main_panel.setBackground(Color.white);
-      main_panel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
-
-      most_watched = new JPanel(); // sub-panel 1
-      most_watched.add(new JLabel("Most Watched"));
-
-      top_rated = new JPanel(); // sub-panel 2
-      top_rated.add(new JLabel("Top Rated"));
-
-      data_stats = new JPanel(); // sub-panel 3
-      data_stats.add(new JLabel("Statistics"));
-
-      // Add to the main panel
-      main_panel.add(most_watched);
-      main_panel.add(top_rated);
-      main_panel.add(data_stats);
-
-      // Adding everything together
-      f.add(mb);f.add(main_panel);    
-      f.setJMenuBar(mb);  
-      f.setLayout(null);    
-      f.setSize(1200,700);  
-      setLocationRelativeTo(null);  
-      f.setVisible(true);    
-  }
-  // Actions when events is detected     
-  public void actionPerformed(ActionEvent e) {    
-      
-  }   
-  // Main Function
-  public static void main(String[] args) {    
-      new ViewerGUI();    
-  }    
+        // Adding everything to the frame
+        f.setLayout(new BorderLayout(50, 15));
+        f.add(mb);f.add(main_panel, BorderLayout.CENTER);    
+        f.setJMenuBar(mb);  
+        f.setSize(1200,700);  
+        setLocationRelativeTo(null);  
+        f.setVisible(true);    
+    }
+    // Actions when events is detected     
+    public void actionPerformed(ActionEvent e) {    
+        
+    }   
+    // Main Function
+    public static void main(String[] args) {    
+        new ViewerGUI();    
+    }    
 }    
