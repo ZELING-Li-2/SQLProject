@@ -7,13 +7,13 @@ import javax.swing.border.TitledBorder;
 public class ViewerGUI extends JFrame implements ActionListener{    
     static JFrame f;    
     JMenuBar mb;    
-    JMenu Home, Shows, Movies, Shorts, Videos;    
-    JMenuItem top_show, top_movie, movie_star, show_star, show_cus_rating, movie_cus_rating, movie_director, show_director, movie_writer, show_writer;
-    JMenuItem top_short, top_video, short_star, video_star, short_cus_rating, video_cus_rating, short_director, video_director, short_writer, video_writer;
+    JMenu Home, Shows, Movies, Shorts, Videos; 
+    JMenuItem home_, show_, movie_, short_, video_;
     JButton team_logo, search_button;
     JTextField search_field;
-    private JPanel main_panel, buff_field, most_watched, top_rated, data_stats;
-
+    TextField text = new TextField(15), most_watch = new TextField(15), top_rate = new TextField(20), recent_watch = new TextField(15);
+    private JPanel main_panel, buff_field, most_watched, top_rated, recently_watched;
+    private int numClicks = 0;
     ViewerGUI(){
         /* NAVBAR SECTION*/
 
@@ -24,60 +24,22 @@ public class ViewerGUI extends JFrame implements ActionListener{
         search_field = new JTextField("Search Movies/Shows");
         search_field.setEditable(true);  
 
-         // The menue items (inside the menue list)
+         // The menu items (inside the menu list)
         f = new JFrame("ZAS VIEWER GUI");    
-        //shows
-        top_show = new JMenuItem("Top 10");  
-        show_star = new JMenuItem("By Star");    
-        show_director = new JMenuItem("By director"); 
-        show_cus_rating = new JMenuItem("By rating");    
-        show_writer = new JMenuItem("By Writer"); 
-        // Each content can only have one parent
-        //movies
-        top_movie = new JMenuItem("Top 10");  
-        movie_star = new JMenuItem("By Star");    
-        movie_director = new JMenuItem("By director"); 
-        movie_cus_rating = new JMenuItem("By rating");    
-        movie_writer = new JMenuItem("By Writer");     
-        //short
-        top_short = new JMenuItem("Top 10");  
-        short_star = new JMenuItem("By Star");    
-        short_director = new JMenuItem("By director"); 
-        short_cus_rating = new JMenuItem("By rating");    
-        short_writer = new JMenuItem("By Writer");   
-        //video
-        top_video = new JMenuItem("Top 10");  
-        video_star = new JMenuItem("By Star");    
-        video_director = new JMenuItem("By director"); 
-        video_cus_rating = new JMenuItem("By rating");    
-        video_writer = new JMenuItem("By Writer");    
 
-        // Add action Listeners
-        //movie
-        top_movie.addActionListener(this);    
-        movie_star.addActionListener(this);    
-        movie_director.addActionListener(this);    
-        movie_cus_rating.addActionListener(this); 
-        movie_writer.addActionListener(this);
-        //show
-        top_show.addActionListener(this);    
-        show_star.addActionListener(this);    
-        show_director.addActionListener(this);    
-        show_cus_rating.addActionListener(this); 
-        show_writer.addActionListener(this);
-        //short
-        top_short.addActionListener(this);    
-        short_star.addActionListener(this);    
-        short_director.addActionListener(this);    
-        short_cus_rating.addActionListener(this); 
-        short_writer.addActionListener(this);
-        //video
-        top_video.addActionListener(this);    
-        video_star.addActionListener(this);    
-        video_director.addActionListener(this);    
-        video_cus_rating.addActionListener(this); 
-        video_writer.addActionListener(this);
-        search_button.addActionListener(this);
+        home_ = new JMenuItem("Show all titles");
+        show_ = new JMenuItem("Show only Shows");
+        movie_ = new JMenuItem("Show only Movies");
+        short_ = new JMenuItem("Show only Shorts");
+        video_ = new JMenuItem("Show only Videos");
+
+
+        home_.addActionListener(this);
+        show_.addActionListener(this);
+        movie_.addActionListener(this);
+        short_.addActionListener(this);
+        video_.addActionListener(this);
+
         // team_logo.addActionListener(this);    
 
         // Menue and contents
@@ -88,11 +50,8 @@ public class ViewerGUI extends JFrame implements ActionListener{
         Shorts = new JMenu("Shorts");
         Videos = new JMenu("Videos");
 
-        // Add menue items to menue lists, and menue list to menue bar
-        Movies.add(top_movie);Movies.add(movie_star);Movies.add(movie_director);Movies.add(movie_cus_rating);Movies.add(movie_writer);    
-        Shows.add(top_show);Shows.add(show_star);Shows.add(show_director);Shows.add(show_cus_rating);Shows.add(show_writer);    
-        Shorts.add(top_short);Shorts.add(short_star);Shorts.add(short_director);Shorts.add(short_cus_rating);Shorts.add(short_writer);  
-        Videos.add(top_video);Videos.add(video_star);Videos.add(video_director);Videos.add(video_cus_rating);Videos.add(video_writer);  
+        Home.add(home_); Movies.add(movie_); Shows.add(show_); Shorts.add(short_); Videos.add(video_);
+
         // mb.add(team_logo);
         mb.add(Box.createHorizontalGlue());
         mb.add(Home);mb.add(Box.createHorizontalGlue());
@@ -110,8 +69,8 @@ public class ViewerGUI extends JFrame implements ActionListener{
 
         // Panels
         main_panel = new JPanel(); // main panel
-        main_panel.setLayout(new GridLayout(1, 3));
-        main_panel.add(new JLabel("Main Panel"));
+        main_panel.setLayout(new GridLayout(3, 1));
+        //main_panel.add(new JLabel("Main Panel"));
         main_panel.setBackground(Color.white);
         main_panel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 
@@ -128,7 +87,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
         l1.addElement("Item3");  
         l1.addElement("Item4");  
         JList<String> most_watchedlist = new JList<>(l1);  
-        most_watchedlist.setBounds(100,100, 75,75);  
+        most_watchedlist.setBounds(100,100, 375,375);  
 
         most_watched.add(most_watchedlist);  // Add the list to the movie  
 
@@ -145,23 +104,27 @@ public class ViewerGUI extends JFrame implements ActionListener{
 
         top_rated.add(top_ratedlist);
 
-        //Statistics
-        data_stats = new JPanel(); // sub-panel 3
+        // Recently Watched
+        recently_watched = new JPanel(); // sub-panel 3
         DefaultListModel<String> l3 = new DefaultListModel<>();  
-        l3.addElement("STATISTICS"); 
+        l3.addElement("RECENTLY WATCHED"); 
         l3.addElement("Item1");  
         l3.addElement("Item2");  
         l3.addElement("Item3");  
         l3.addElement("Item4");  
-        JList<String> data_statslist = new JList<>(l3);  
-        data_statslist.setBounds(100,100, 75,75);  
+        JList<String> recentlist = new JList<>(l3);  
+        recentlist.setBounds(100,100, 75,75);  
 
-        data_stats.add(data_statslist);
+        recently_watched.add(recentlist);
 
         // Add to the main panel
-        main_panel.add(most_watched);
-        main_panel.add(top_rated);
-        main_panel.add(data_stats);
+        //main_panel.add(most_watched);
+        main_panel.add(most_watch);
+        //main_panel.add(top_rated);
+        main_panel.add(top_rate);
+        //main_panel.add(recently_watched);
+        main_panel.add(recent_watch);
+        //main_panel.add(text);
 
         // Adding everything to the frame
         f.setLayout(new BorderLayout(50, 15));
@@ -173,10 +136,99 @@ public class ViewerGUI extends JFrame implements ActionListener{
     }
     // Actions when events is detected     
     public void actionPerformed(ActionEvent e) {    
-        
+        numClicks ++;
+        //text.setText("Button Clicked " + numClicks + " times");
+        if(e.getSource() == home_) {
+          //text.setText("Button Clicked " + numClicks + " times after clicking home");
+        } else if (e.getSource() == movie_) {
+          //text.setText("Button Clicked " + numClicks + " times after clicking movies");
+        } else if (e.getSource() == video_) {
+          //text.setText("Button Clicked " + numClicks + " times after clicking videos");
+        } else if (e.getSource() == short_) {
+          //text.setText("Button Clicked " + numClicks + " times after clicking shorts");
+        } else if (e.getSource() == show_) {
+          //text.setText("Button Clicked " + numClicks + " times after clicking shows");
+        }
+
+      
     }   
+
+    
+
+
+
+
+    class FHold {//Connection Runner "Function Holder" allows us to call queries without reestablishing connection
+    //static fields are here
+    String userName;
+    Connection conn;
+    String teamNumber;
+    String sectionNumber;
+    String dbName;
+    String dbConnectionString;
+    String userPassword;
+    public FHold(){
+        teamNumber = "2";
+        sectionNumber = "901";
+        dbName = "csce315" + sectionNumber + "_" + teamNumber + "db";
+        dbConnectionString = "jdbc:postgresql://csce-315-db.engr.tamu.edu/" + dbName;
+        userName = "csce315" + sectionNumber + "_" + teamNumber + "user";
+        userPassword = "password1";
+        try {
+            conn = DriverManager.getConnection(dbConnectionString,userName, userPassword);
+            } 
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+            }
+        System.out.println("Opened database successfully");   
+    }
+     
+    public String call_query(String Query) {
+        //System.out.println(userName);
+        String returnstring = "";
+        try{
+            Statement stmt = conn.createStatement();
+            ResultSet resultSet = stmt.executeQuery(Query);
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            int columnsNumber = rsmd.getColumnCount();
+            
+            //System.out.println("--------------------Results: --------------------");
+            //figure out how to turn these into returnables later
+
+            while (resultSet.next()) {
+                for (int i = 0; i <= columnsNumber; i++) {
+                    
+                    if (i > 0){ 
+                    
+                    String columnValue = resultSet.getString(i);
+                    returnstring += (columnValue + " " + rsmd.getColumnName(i));
+                    returnstring += (",  ");
+                    }
+                }
+                System.out.println("");
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+            }
+        
+        return returnstring;
+    }
+}
+
+
+
+
+
+
+
     // Main Function
     public static void main(String[] args) {    
         new ViewerGUI();    
     }    
+    
 }    
