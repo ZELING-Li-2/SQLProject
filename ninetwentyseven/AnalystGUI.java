@@ -3,6 +3,67 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.TitledBorder;
+import java.util.Arrays;
+class FHold {//Connection Runner "Function Holder" allows us to call queries without reestablishing connection
+    //static fields are here
+    String userName;
+    Connection conn;
+    String teamNumber;
+    String sectionNumber;
+    String dbName;
+    String dbConnectionString;
+    String userPassword;
+    public FHold(){
+        teamNumber = "2";
+        sectionNumber = "901";
+        dbName = "csce315" + sectionNumber + "_" + teamNumber + "db";
+        dbConnectionString = "jdbc:postgresql://csce-315-db.engr.tamu.edu/" + dbName;
+        userName = "csce315" + sectionNumber + "_" + teamNumber + "user";
+        userPassword = "password1";
+        try {
+            conn = DriverManager.getConnection(dbConnectionString,userName, userPassword);
+            } 
+        catch (Exception e) {
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+            }
+        System.out.println("Opened database successfully");   
+    }
+     
+    public String call_query(String Query) {
+        //System.out.println(userName);
+        String returnstring = "";
+        try{
+            Statement stmt = conn.createStatement();
+            ResultSet resultSet = stmt.executeQuery(Query);
+            ResultSetMetaData rsmd = resultSet.getMetaData();
+            int columnsNumber = rsmd.getColumnCount();
+            
+            //System.out.println("--------------------Results: --------------------");
+            //figure out how to turn these into returnables later
+
+            while (resultSet.next()) {
+                for (int i = 0; i <= columnsNumber; i++) {
+                    
+                    if (i > 0){ 
+                    
+                    String columnValue = resultSet.getString(i);
+                    returnstring += (columnValue);
+                    returnstring += ("/");
+                    }
+                }
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            System.err.println(e.getClass().getName()+": "+e.getMessage());
+            System.exit(0);
+            }
+        
+        return returnstring;
+    }
+}
 
 public class AnalystGUI extends JFrame implements ActionListener{    
     static JFrame f;    
@@ -12,10 +73,11 @@ public class AnalystGUI extends JFrame implements ActionListener{
     JButton team_logo, search_button;
     JTextField search_field;
     private JPanel main_panel, buff_field, most_watched, top_rated, data_stats;
-
-    AnalystGUI(){
+    String user = "";
+    
+    AnalystGUI(){//wtf is this language is this a constructor?
         /* NAVBAR SECTION*/
-
+        FHold my_Fhold = new FHold();
         // Logo and search button
         // team_logo = new JButton(new ImageIcon("Team_Logo.png"));    
         // team_logo.setBounds(10,10,10, 4); 
@@ -25,6 +87,8 @@ public class AnalystGUI extends JFrame implements ActionListener{
 
          // The menue items (inside the menue list)
         f = new JFrame("ZAS ANALYST GUI");    
+        
+        
         top_show = new JMenuItem("Top 10");  
         show_star = new JMenuItem("By Star");    
         show_director = new JMenuItem("By director"); 
@@ -48,7 +112,9 @@ public class AnalystGUI extends JFrame implements ActionListener{
         show_director.addActionListener(this);    
         show_cus_rating.addActionListener(this); 
         show_writer.addActionListener(this);
-        search_button.addActionListener(this);
+        
+        //search_button.addActionListener(this());
+        search_button.addActionListener(e -> searchButton(my_Fhold));//using a lambda>
         // team_logo.addActionListener(this);    
 
         // Menue and contents
@@ -105,7 +171,7 @@ public class AnalystGUI extends JFrame implements ActionListener{
         // Top rated movie
         top_rated = new JPanel(); // sub-panel 2
         DefaultListModel<String> l2 = new DefaultListModel<>();  
-        l2.addElement("TOP RATED"); 
+        l2.addElement("TOP RATED"); //top 5 in numvotes in titles matching the search
         l2.addElement("Item1");  
         l2.addElement("Item2");  
         l2.addElement("Item3");  
@@ -115,10 +181,11 @@ public class AnalystGUI extends JFrame implements ActionListener{
 
         top_rated.add(top_ratedlist);
 
+
         //Statistics
         data_stats = new JPanel(); // sub-panel 3
         DefaultListModel<String> l3 = new DefaultListModel<>();  
-        l3.addElement("STATISTICS"); 
+        l3.addElement("Average Ratings"); 
         l3.addElement("Item1");  
         l3.addElement("Item2");  
         l3.addElement("Item3");  
@@ -145,8 +212,81 @@ public class AnalystGUI extends JFrame implements ActionListener{
     public void actionPerformed(ActionEvent e) {    
         
     }   
+    
+    public void searchButton(FHold my_Fhold){//u gotta pass it in because aparently this does not share the class scope
+        //System.out.println("Search Button Pressed!");
+        //get string from JTextField search_field;
+        String searchValue = search_field.getText();
+        String searchQuery = "SELECT originalTitle FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY averageRating DESC;"; 
+        String searchQuery2 = "SELECT averageRating FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY averageRating DESC;"; 
+        String searchQuery3 = "SELECT originalTitle FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY views DESC;"; 
+
+
+        //generate queries
+
+        String top_rated_query = my_Fhold.call_query(searchQuery);//query the text 
+        String top_rated_query_R = my_Fhold.call_query(searchQuery2);//ratings
+        String top_rated_query_V = my_Fhold.call_query(searchQuery3);//Views
+
+        String[] top_rated_querylist = Arrays.copyOfRange(top_rated_query.split("/"),0,4); 
+        String[] top_rated_querylist_R = Arrays.copyOfRange(top_rated_query_R.split("/"),0,4);//ratings
+        String[] top_rated_querylist_V = Arrays.copyOfRange(top_rated_query_V.split("/"),0,4);//votes
+        
+
+        //write to top rated
+
+        DefaultListModel<String> l2a = new DefaultListModel<>(); 
+        l2a.addElement("TOP RATED"); //top 5 in numvotes in titles matching the search
+        l2a.addElement(top_rated_querylist[0]);  
+        l2a.addElement(top_rated_querylist[1]);  
+        l2a.addElement(top_rated_querylist[2]);  
+        l2a.addElement(top_rated_querylist[3]);  
+        JList<String> top_ratedlist2 = new JList<>(l2a);  
+        top_ratedlist2.setBounds(100,100, 75,75);
+        top_rated.removeAll();
+        top_rated.revalidate();
+        top_rated.add(top_ratedlist2);
+        top_rated.revalidate();
+
+        
+        
+        //write to statistics column. We are doing rating for now, you can look through my code and change it if you please
+        DefaultListModel<String> l3a = new DefaultListModel<>(); 
+        l3a.addElement("Average Ratings:"); //top 5 in numvotes in titles matching the search
+        l3a.addElement(top_rated_querylist_R[0]);  
+        l3a.addElement(top_rated_querylist_R[1]);  
+        l3a.addElement(top_rated_querylist_R[2]);  
+        l3a.addElement(top_rated_querylist_R[3]);  
+        JList<String> RatingsList = new JList<>(l3a);  
+        data_stats.setBounds(100,100, 75,75);
+        data_stats.removeAll();
+        data_stats.revalidate();
+        data_stats.add(RatingsList);
+        data_stats.revalidate();
+        
+        //write to most watched, assuming that is proportional to votes
+    
+     
+        DefaultListModel<String> l4a = new DefaultListModel<>(); 
+        l4a.addElement("TOP RATED"); //top 5 in numvotes in titles matching the search
+        l4a.addElement(top_rated_querylist_V[0]);  
+        l4a.addElement(top_rated_querylist_V[1]);  
+        l4a.addElement(top_rated_querylist_V[2]);  
+        l4a.addElement(top_rated_querylist_V[3]);  
+        JList<String> ViewsList = new JList<>(l4a);  
+        most_watched.setBounds(100,100, 75,75);
+        most_watched.removeAll();
+        most_watched.revalidate();
+        most_watched.add(ViewsList);
+        most_watched.revalidate();
+ 
+        //fill in the thing
+        
+        
+    }
     // Main Function
     public static void main(String[] args) {    
-        new AnalystGUI();    
+        new AnalystGUI();
+        
     }    
 }    
