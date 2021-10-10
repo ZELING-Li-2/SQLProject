@@ -104,7 +104,10 @@ public class AnalystGUI extends JFrame implements ActionListener{
         movie_writer = new JMenuItem("By Writer");     
 
         // Add action Listeners
-        top_movie.addActionListener(this);    
+         
+
+
+        
         movie_star.addActionListener(this);    
         movie_director.addActionListener(this);    
         movie_cus_rating.addActionListener(this); 
@@ -117,6 +120,7 @@ public class AnalystGUI extends JFrame implements ActionListener{
         
         //search_button.addActionListener(this());
         search_button.addActionListener(e -> searchButton(my_Fhold));//using a lambda>
+        top_movie.addActionListener(e -> top_movie_button(my_Fhold)); 
         // team_logo.addActionListener(this);    
 
         // Menue and contents
@@ -249,6 +253,24 @@ public class AnalystGUI extends JFrame implements ActionListener{
             data_stats.revalidate();
         }
     }   
+    public void top_movie_button(FHold my_Fhold){
+        DefaultListModel<String> l2 = new DefaultListModel<>();  
+        l2.addElement("Top Rated"); //top 5 in numvotes in titles matching the search
+        String searchQuery_top_rated = "SELECT originalTitle FROM titles ORDER BY averageRating DESC LIMIT 10;"; 
+        String top_rated_query_def = my_Fhold.call_query(searchQuery_top_rated);//query the text 
+        String[] top_rated_query_deflist = Arrays.copyOfRange(top_rated_query_def.split("/"),0,10); 
+        for (int z = 0; z < 10; z++){
+            l2.addElement(top_rated_query_deflist[z]);
+        }        
+        top_ratedlist = new JList<>(l2);  
+        // top_ratedlist.setBounds(100,100, 75,75);   
+
+        top_ratedlist.setBounds(100,100, 75,75);
+        top_rated.removeAll();
+        top_rated.revalidate();
+        top_rated.add(top_ratedlist);
+        top_rated.revalidate();
+    }
     
     public void searchButton(FHold my_Fhold){//u gotta pass it in because aparently this does not share the class scope
         //System.out.println("Search Button Pressed!");
