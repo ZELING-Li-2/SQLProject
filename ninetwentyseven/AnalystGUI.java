@@ -228,19 +228,19 @@ public class AnalystGUI extends JFrame implements ActionListener{
         String top_rated_query_R = my_Fhold.call_query(searchQuery2);//ratings
         String top_rated_query_V = my_Fhold.call_query(searchQuery3);//Views
 
-        String[] top_rated_querylist = Arrays.copyOfRange(top_rated_query.split("/"),0,4); 
-        String[] top_rated_querylist_R = Arrays.copyOfRange(top_rated_query_R.split("/"),0,4);//ratings
-        String[] top_rated_querylist_V = Arrays.copyOfRange(top_rated_query_V.split("/"),0,4);//votes
+        String[] top_rated_querylist = Arrays.copyOfRange(top_rated_query.split("/"),0,10); 
+        String[] top_rated_querylist_R = Arrays.copyOfRange(top_rated_query_R.split("/"),0,10);//ratings
+        String[] top_rated_querylist_V = Arrays.copyOfRange(top_rated_query_V.split("/"),0,10);//votes
         
 
         //write to top rated
 
         DefaultListModel<String> l2a = new DefaultListModel<>(); 
         l2a.addElement("TOP RATED"); //top 5 in numvotes in titles matching the search
-        l2a.addElement(top_rated_querylist[0]);  
-        l2a.addElement(top_rated_querylist[1]);  
-        l2a.addElement(top_rated_querylist[2]);  
-        l2a.addElement(top_rated_querylist[3]);  
+        for (int z = 0; z < 10; z++){
+            l2a.addElement(top_rated_querylist[z]);
+        }
+
         JList<String> top_ratedlist2 = new JList<>(l2a);  
         top_ratedlist2.setBounds(100,100, 75,75);
         top_rated.removeAll();
@@ -253,10 +253,9 @@ public class AnalystGUI extends JFrame implements ActionListener{
         //write to statistics column. We are doing rating for now, you can look through my code and change it if you please
         DefaultListModel<String> l3a = new DefaultListModel<>(); 
         l3a.addElement("Average Ratings:"); //top 5 in numvotes in titles matching the search
-        l3a.addElement(top_rated_querylist_R[0]);  
-        l3a.addElement(top_rated_querylist_R[1]);  
-        l3a.addElement(top_rated_querylist_R[2]);  
-        l3a.addElement(top_rated_querylist_R[3]);  
+        for (int z = 0; z < 10; z++){
+            l3a.addElement(top_rated_querylist_R[z]);
+        }
         JList<String> RatingsList = new JList<>(l3a);  
         data_stats.setBounds(100,100, 75,75);
         data_stats.removeAll();
@@ -268,11 +267,10 @@ public class AnalystGUI extends JFrame implements ActionListener{
     
      
         DefaultListModel<String> l4a = new DefaultListModel<>(); 
-        l4a.addElement("TOP RATED"); //top 5 in numvotes in titles matching the search
-        l4a.addElement(top_rated_querylist_V[0]);  
-        l4a.addElement(top_rated_querylist_V[1]);  
-        l4a.addElement(top_rated_querylist_V[2]);  
-        l4a.addElement(top_rated_querylist_V[3]);  
+        l4a.addElement("Most Watched"); //top 5 in numvotes in titles matching the search
+        for (int z = 0; z < 10; z++){
+            l4a.addElement(top_rated_querylist_V[z]);
+        } 
         JList<String> ViewsList = new JList<>(l4a);  
         most_watched.setBounds(100,100, 75,75);
         most_watched.removeAll();
