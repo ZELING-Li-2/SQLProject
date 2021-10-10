@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import javax.swing.border.TitledBorder;
 import java.util.Arrays;
+
 class FHold {//Connection Runner "Function Holder" allows us to call queries without reestablishing connection
     //static fields are here
     String userName;
@@ -74,6 +75,7 @@ public class AnalystGUI extends JFrame implements ActionListener{
     JTextField search_field;
     private JPanel main_panel, buff_field, most_watched, top_rated, data_stats;
     String user = "";
+    JList<String> most_watchedlist, top_ratedlist, data_statslist;
     
     AnalystGUI(){//wtf is this language is this a constructor?
         /* NAVBAR SECTION*/
@@ -158,42 +160,59 @@ public class AnalystGUI extends JFrame implements ActionListener{
         title_most_watched.setTitlePosition(TitledBorder.TOP);
         /* List of movies*/
         DefaultListModel<String> l1 = new DefaultListModel<>();  
-        l1.addElement("MOST WATCHED"); 
-        l1.addElement("Item1");  
-        l1.addElement("Item2");  
-        l1.addElement("Item3");  
-        l1.addElement("Item4");  
-        JList<String> most_watchedlist = new JList<>(l1);  
+        l1.addElement("Most Watched"); 
+        String searchQuery_mostwatched = "SELECT originalTitle FROM titles ORDER BY Views DESC LIMIT 10;"; 
+        String mostwatched_query_def = my_Fhold.call_query(searchQuery_mostwatched);//query the text 
+        String[] mostwatched_query_deflist = Arrays.copyOfRange(mostwatched_query_def.split("/"),0,4); 
+        for (int z = 0; z < 10; z++){
+            l1.addElement(mostwatched_query_deflist[z]);
+        }
+        JList most_watchedlist_def = new JList<>(l1);  
+        most_watchedlist = new JList<>(l1);  
         most_watchedlist.setBounds(100,100, 75,75);  
 
+        most_watched.removeAll();
+        most_watched.revalidate();
         most_watched.add(most_watchedlist);  // Add the list to the movie  
+        most_watched.revalidate();
 
         // Top rated movie
         top_rated = new JPanel(); // sub-panel 2
         DefaultListModel<String> l2 = new DefaultListModel<>();  
-        l2.addElement("TOP RATED"); //top 5 in numvotes in titles matching the search
-        l2.addElement("Item1");  
-        l2.addElement("Item2");  
-        l2.addElement("Item3");  
-        l2.addElement("Item4");  
-        JList<String> top_ratedlist = new JList<>(l2);  
-        top_ratedlist.setBounds(100,100, 75,75);  
+        l2.addElement("Top Rated"); //top 5 in numvotes in titles matching the search
+        String searchQuery_top_rated = "SELECT originalTitle FROM titles ORDER BY averageRating DESC LIMIT 10;"; 
+        String top_rated_query_def = my_Fhold.call_query(searchQuery_top_rated);//query the text 
+        String[] top_rated_query_deflist = Arrays.copyOfRange(top_rated_query_def.split("/"),0,4); 
+        for (int z = 0; z < 10; z++){
+            l2.addElement(top_rated_query_deflist[z]);
+        }        
+        top_ratedlist = new JList<>(l2);  
+        // top_ratedlist.setBounds(100,100, 75,75);   
 
+        top_ratedlist.setBounds(100,100, 75,75);
+        top_rated.removeAll();
+        top_rated.revalidate();
         top_rated.add(top_ratedlist);
+        top_rated.revalidate();
 
 
         //Statistics
         data_stats = new JPanel(); // sub-panel 3
         DefaultListModel<String> l3 = new DefaultListModel<>();  
-        l3.addElement("Average Ratings"); 
-        l3.addElement("Item1");  
-        l3.addElement("Item2");  
-        l3.addElement("Item3");  
-        l3.addElement("Item4");  
-        JList<String> data_statslist = new JList<>(l3);  
+        l3.addElement("Top Stars"); 
+        String searchQuery_data_stats = "SELECT primaryName, COUNT(principals.titleId) as totalMovies FROM names INNER JOIN principals ON names.nconst = principals.nconst GROUP BY names.primaryname ORDER BY totalMovies DESC LIMIT 10;"; 
+        String data_stats_query_def = my_Fhold.call_query(searchQuery_data_stats);//query the text 
+        String[] data_stats_query_deflist = Arrays.copyOfRange(data_stats_query_def.split("/"),0,4); 
+        for (int z = 0; z < 10; z++){
+            l3.addElement(data_stats_query_deflist[z]);
+        }        
+        data_statslist = new JList<>(l3);  
         data_statslist.setBounds(100,100, 75,75);  
 
+        data_stats.removeAll();
+        data_stats.revalidate();
         data_stats.add(data_statslist);
+        data_stats.revalidate();
 
         // Add to the main panel
         main_panel.add(most_watched);
@@ -206,11 +225,29 @@ public class AnalystGUI extends JFrame implements ActionListener{
         f.setJMenuBar(mb);  
         f.setSize(1200,700);  
         setLocationRelativeTo(null);  
-        f.setVisible(true);    
+        f.setVisible(true);
+        JOptionPane.showMessageDialog(f,"Hello, Welcome \n Z A S");
+    
     }
-    // Actions when events is detected     
+    // Actions when events is detected
+    
     public void actionPerformed(ActionEvent e) {    
-        
+        if (e.getSource() == top_movie){ // Reset main panel
+            most_watched.removeAll();
+            most_watched.revalidate();
+            most_watched.add(most_watchedlist);
+            most_watched.revalidate();
+
+            top_rated.removeAll();
+            top_rated.revalidate();
+            top_rated.add(top_ratedlist);
+            top_rated.revalidate();
+
+            data_stats.removeAll();
+            data_stats.revalidate();
+            data_stats.add(data_statslist);
+            data_stats.revalidate();
+        }
     }   
     
     public void searchButton(FHold my_Fhold){//u gotta pass it in because aparently this does not share the class scope
@@ -236,7 +273,7 @@ public class AnalystGUI extends JFrame implements ActionListener{
         //write to top rated
 
         DefaultListModel<String> l2a = new DefaultListModel<>(); 
-        l2a.addElement("TOP RATED"); //top 5 in numvotes in titles matching the search
+        l2a.addElement("Top Rated"); //top 5 in numvotes in titles matching the search
         for (int z = 0; z < 10; z++){
             l2a.addElement(top_rated_querylist[z]);
         }
@@ -252,7 +289,7 @@ public class AnalystGUI extends JFrame implements ActionListener{
         
         //write to statistics column. We are doing rating for now, you can look through my code and change it if you please
         DefaultListModel<String> l3a = new DefaultListModel<>(); 
-        l3a.addElement("Average Ratings:"); //top 5 in numvotes in titles matching the search
+        l3a.addElement("Average Rating"); //top 5 in numvotes in titles matching the search
         for (int z = 0; z < 10; z++){
             l3a.addElement(top_rated_querylist_R[z]);
         }
