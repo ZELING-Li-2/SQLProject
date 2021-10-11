@@ -10,12 +10,11 @@ import java.util.Collections;
 
 public class ViewerGUI extends JFrame implements ActionListener{    
     static JFrame f;    
-    Vector<String> searchedVec = new Vector<String> (0);
     JMenuBar mb;    
     JMenu Home, Shows, Movies, Shorts, Videos; 
     JMenuItem home_, show_, movie_, short_, video_;
-    JButton team_logo, search_button;
-    JTextField search_field;
+    JButton team_logo, search_button, user_button;
+    JTextField search_field, user_field;
     TextField text = new TextField(15), most_watch = new TextField(15), top_rate = new TextField(20), recent_watch = new TextField(15);
     private JPanel main_panel, buff_field, most_watched, top_rated, recently_watched;
     private int numClicks = 0;
@@ -29,6 +28,9 @@ public class ViewerGUI extends JFrame implements ActionListener{
         search_button = new JButton("Search");
         search_field = new JTextField("Search Movies/Shows");
         search_field.setEditable(true);  
+        user_button = new JButton("Login");
+        user_field = new JTextField("Login by inputting ID");
+        user_field.setEditable(true);
 
          // The menu items (inside the menu list)
         f = new JFrame("ZAS VIEWER GUI");    
@@ -41,11 +43,13 @@ public class ViewerGUI extends JFrame implements ActionListener{
 
 
         home_.addActionListener(e->homeButton(my_Fhold));
-        show_.addActionListener(this);
-        movie_.addActionListener(this);
-        short_.addActionListener(this);
-        video_.addActionListener(this);
+        show_.addActionListener(e->showButton(my_Fhold));
+        movie_.addActionListener(e->movieButton(my_Fhold));
+        short_.addActionListener(e->shortButton(my_Fhold));
+        video_.addActionListener(e->videoButton(my_Fhold));
         search_button.addActionListener(e->searchButton(my_Fhold));
+        user_button.addActionListener(e->userButton(my_Fhold));
+        
 
         // team_logo.addActionListener(this);    
 
@@ -67,6 +71,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
         mb.add(Shorts);mb.add(Box.createHorizontalGlue());
         mb.add(Videos);mb.add(Box.createHorizontalGlue());
         mb.add(search_field);mb.add(search_button);  
+        mb.add(user_field);mb.add(user_button);
         mb.revalidate();
 
         /* MAIN CONTENT SECTION*/
@@ -116,7 +121,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
         DefaultListModel<String> l3 = new DefaultListModel<>();  
         l3.addElement("RECENTLY WATCHED"); 
         l3.addElement("No Recently Watched Movies/Shows/Shorts/Videos.");  
-        l3.addElement("Search to update");  
+        l3.addElement("Login to update");  
         //l3.addElement("Search or Click on Home/Movies/Shows/Shorts/Videos to update");  
         //l3.addElement("Search or Click on Home/Movies/Shows/Shorts/Videos to update");    
         JList<String> recentlist = new JList<>(l3);  
@@ -177,7 +182,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
     }   
 
     
-
+    
     public void homeButton(FHold my_FHold) {
       String searchTop10Watch = "SELECT originalTitle FROM titles ORDER BY Views DESC LIMIT 10;";
       String searchTop10Rated = "SELECT originalTitle FROM titles ORDER BY averageRating DESC LIMIT 10;";
@@ -185,15 +190,14 @@ public class ViewerGUI extends JFrame implements ActionListener{
       String query = my_FHold.call_query(searchTop10Watch);
       String query2 = my_FHold.call_query(searchTop10Rated);
       
-      String[] top10Watched = Arrays.copyOfRange(query.split("/"),0,4);
-      String[] top10Rated = Arrays.copyOfRange(query.split("/"),0,4);
+      String[] top10Watched = Arrays.copyOfRange(query.split("/"),0,10);
+      String[] top10Rated = Arrays.copyOfRange(query.split("/"),0,10);
 
       DefaultListModel<String> l2h = new DefaultListModel<>(); 
-      l2h.addElement("TOP RATED"); //top 5 in numvotes in titles matching the search
-      l2h.addElement(top10Rated[0]);  
-      l2h.addElement(top10Rated[1]);  
-      l2h.addElement(top10Rated[2]);  
-      l2h.addElement(top10Rated[3]);  
+      l2h.addElement("Top Rated Titles"); //top 5 in numvotes in titles matching the search
+      for (int i = 0; i < top10Rated.length; i ++) {
+        l2h.addElement(top10Rated[i]);
+      }
       JList<String> topRatedList = new JList<>(l2h);  
       topRatedList.setBounds(100,100, 75,75);
       top_rated.removeAll();
@@ -202,11 +206,10 @@ public class ViewerGUI extends JFrame implements ActionListener{
       top_rated.revalidate();
 
       DefaultListModel<String> l3h = new DefaultListModel<>(); 
-      l3h.addElement("Most Watched"); //top 5 in numvotes in titles matching the search
-      l3h.addElement(top10Watched[0]);  
-      l3h.addElement(top10Watched[1]);  
-      l3h.addElement(top10Watched[2]);  
-      l3h.addElement(top10Watched[3]);  
+      l3h.addElement("Most Watched Titles"); //top 5 in numvotes in titles matching the search
+      for (int i = 0; i < top10Watched.length; i++) {
+        l3h.addElement(top10Watched[i]);
+      }
       JList<String> ViewsList = new JList<>(l3h);  
       most_watched.setBounds(100,100, 75,75);
       most_watched.removeAll();
@@ -215,44 +218,188 @@ public class ViewerGUI extends JFrame implements ActionListener{
       most_watched.revalidate();
 
       DefaultListModel<String> l4a = new DefaultListModel<>(); 
-      l4a.addElement("Recently Watched"); //top 5 in numvotes in titles matching the search
-      l4a.addElement(searchedVec.get(0));  
-      if (searchedVec.size() > 1) {
-        l4a.addElement(searchedVec.get(1));
-      }
-      if (searchedVec.size() > 2) {
-        l4a.addElement(searchedVec.get(2));
-      }
-      if (searchedVec.size() > 3) {
-        l4a.addElement(searchedVec.get(3));
-      }
-      if (searchedVec.size() > 4) {
-        l4a.addElement(searchedVec.get(4));
-      }
-      if (searchedVec.size() > 5) {
-        l4a.addElement(searchedVec.get(5));
-      }
-      if (searchedVec.size() > 6) {
-        l4a.addElement(searchedVec.get(6));
-      }
-      if (searchedVec.size() > 7) {
-        l4a.addElement(searchedVec.get(7));
-      } 
-      if (searchedVec.size() > 8) {
-        l4a.addElement(searchedVec.get(9));
-      }
+      l4a.addElement("Recently Watched Titles"); //top 5 in numvotes in titles matching the search
+      
     }
 
-    public void addToWatchHistory(String title) {
-      if (searchedVec.size() > 0) {
-        Collections.reverse(searchedVec);
+    public void movieButton(FHold my_FHold) {
+      String searchTop10Watch = "SELECT originalTitle FROM titles WHERE titleType LIKE 'movie' ORDER BY Views DESC LIMIT 10;";
+      String searchTop10Rated = "SELECT originalTitle FROM titles WHERE titleType LIKE 'movie' ORDER BY averageRating DESC LIMIT 10;";
+      
+      String query = my_FHold.call_query(searchTop10Watch);
+      String query2 = my_FHold.call_query(searchTop10Rated);
+      
+      String[] top10Watched = Arrays.copyOfRange(query.split("/"),0,10);
+      String[] top10Rated = Arrays.copyOfRange(query.split("/"),0,10);
+
+      DefaultListModel<String> l2m = new DefaultListModel<>(); 
+      l2m.addElement("Top Rated Movies"); //top 5 in numvotes in titles matching the search
+      for (int i = 0; i < top10Rated.length; i ++) {
+        l2m.addElement(top10Rated[i]);
+      }
+      JList<String> topRatedList = new JList<>(l2m);  
+      topRatedList.setBounds(100,100, 75,75);
+      top_rated.removeAll();
+      top_rated.revalidate();
+      top_rated.add(topRatedList);
+      top_rated.revalidate();
+
+      DefaultListModel<String> l3m = new DefaultListModel<>(); 
+      l3m.addElement("Most Watched Movies"); //top 5 in numvotes in titles matching the search
+      for (int i = 0; i < top10Watched.length; i++) {
+        l3m.addElement(top10Watched[i]);
+      }
+      JList<String> ViewsList = new JList<>(l3m);  
+      most_watched.setBounds(100,100, 75,75);
+      most_watched.removeAll();
+      most_watched.revalidate();
+      most_watched.add(ViewsList);
+      most_watched.revalidate();
+
+      DefaultListModel<String> l4a = new DefaultListModel<>(); 
+      l4a.addElement("Recently Watched Movies"); //top 5 in numvotes in titles matching the search
+      
+    }
+
+    public void showButton(FHold my_FHold) {
+      String searchTop10Watch = "SELECT originalTitle FROM titles WHERE titleType LIKE 'tvSeries' OR titleType LIKE 'tvEpisode' OR titleType LIKE 'tvMiniSeries' ORDER BY Views DESC LIMIT 10;";
+      String searchTop10Rated = "SELECT originalTitle FROM titles WHERE titleType LIKE 'tvSeries' OR titleType LIKE 'tvEpisode' OR titleType LIKE 'tvMiniSeries' ORDER BY averageRating DESC LIMIT 10;";
+      
+      String query = my_FHold.call_query(searchTop10Watch);
+      String query2 = my_FHold.call_query(searchTop10Rated);
+      
+      String[] top10Watched = Arrays.copyOfRange(query.split("/"),0,10);
+      String[] top10Rated = Arrays.copyOfRange(query.split("/"),0,10);
+
+      DefaultListModel<String> l2sw = new DefaultListModel<>(); 
+      l2sw.addElement("Top Rated Shows"); //top 5 in numvotes in titles matching the search
+      for (int i = 0; i < top10Rated.length; i ++) {
+        l2sw.addElement(top10Rated[i]);
+      }
+      JList<String> topRatedList = new JList<>(l2sw);  
+      topRatedList.setBounds(100,100, 75,75);
+      top_rated.removeAll();
+      top_rated.revalidate();
+      top_rated.add(topRatedList);
+      top_rated.revalidate();
+
+      DefaultListModel<String> l3sw = new DefaultListModel<>(); 
+      l3sw.addElement("Most Watched Shows"); //top 5 in numvotes in titles matching the search
+      for (int i = 0; i < top10Watched.length; i++) {
+        l3sw.addElement(top10Watched[i]);
+      }
+      JList<String> ViewsList = new JList<>(l3sw);  
+      most_watched.setBounds(100,100, 75,75);
+      most_watched.removeAll();
+      most_watched.revalidate();
+      most_watched.add(ViewsList);
+      most_watched.revalidate();
+
+      DefaultListModel<String> l4a = new DefaultListModel<>(); 
+      l4a.addElement("Recently Watched Shows"); //top 5 in numvotes in titles matching the search
+    }
+
+    public void shortButton(FHold my_FHold) {
+      String searchTop10Watch = "SELECT originalTitle FROM titles WHERE titleType LIKE 'short' ORDER BY Views DESC LIMIT 10;";
+      String searchTop10Rated = "SELECT originalTitle FROM titles WHERE titleType LIKE 'short' ORDER BY averageRating DESC LIMIT 10;";
+      
+      String query = my_FHold.call_query(searchTop10Watch);
+      String query2 = my_FHold.call_query(searchTop10Rated);
+      
+      String[] top10Watched = Arrays.copyOfRange(query.split("/"),0,10);
+      String[] top10Rated = Arrays.copyOfRange(query.split("/"),0,10);
+
+      DefaultListModel<String> l2sh = new DefaultListModel<>(); 
+      l2sh.addElement("Top Rated Shorts"); //top 5 in numvotes in titles matching the search
+      for (int i = 0; i < top10Rated.length; i ++) {
+        l2sh.addElement(top10Rated[i]);
+      }
+      JList<String> topRatedList = new JList<>(l2sh);  
+      topRatedList.setBounds(100,100, 75,75);
+      top_rated.removeAll();
+      top_rated.revalidate();
+      top_rated.add(topRatedList);
+      top_rated.revalidate();
+
+      DefaultListModel<String> l3sh = new DefaultListModel<>(); 
+      l3sh.addElement("Most Watched Shorts"); //top 5 in numvotes in titles matching the search
+      for (int i = 0; i < top10Watched.length; i++) {
+        l3sh.addElement(top10Watched[i]);
+      }
+      JList<String> ViewsList = new JList<>(l3sh);  
+      most_watched.setBounds(100,100, 75,75);
+      most_watched.removeAll();
+      most_watched.revalidate();
+      most_watched.add(ViewsList);
+      most_watched.revalidate();
+
+      DefaultListModel<String> l4a = new DefaultListModel<>(); 
+      l4a.addElement("Recently Watched Shorts"); //top 5 in numvotes in titles matching the search
+    }
+    
+    public void videoButton(FHold my_FHold) {
+      String searchTop10Watch = "SELECT originalTitle FROM titles WHERE titleType LIKE 'video' ORDER BY Views DESC LIMIT 10;";
+      String searchTop10Rated = "SELECT originalTitle FROM titles WHERE titleType LIKE 'video' ORDER BY averageRating DESC LIMIT 10;";
+      
+      String query = my_FHold.call_query(searchTop10Watch);
+      String query2 = my_FHold.call_query(searchTop10Rated);
+      
+      String[] top10Watched = Arrays.copyOfRange(query.split("/"),0,10);
+      String[] top10Rated = Arrays.copyOfRange(query.split("/"),0,10);
+
+      DefaultListModel<String> l2v = new DefaultListModel<>(); 
+      l2v.addElement("Top Rated Videos"); //top 5 in numvotes in titles matching the search
+      for (int i = 0; i < top10Rated.length; i ++) {
+        l2v.addElement(top10Rated[i]);
+      }
+      JList<String> topRatedList = new JList<>(l2v);  
+      topRatedList.setBounds(100,100, 75,75);
+      top_rated.removeAll();
+      top_rated.revalidate();
+      top_rated.add(topRatedList);
+      top_rated.revalidate();
+
+      DefaultListModel<String> l3v = new DefaultListModel<>(); 
+      l3v.addElement("Most Watched Videos"); //top 5 in numvotes in titles matching the search
+      for (int i = 0; i < top10Watched.length; i++) {
+        l3v.addElement(top10Watched[i]);
+      }
+      JList<String> ViewsList = new JList<>(l3v);  
+      most_watched.setBounds(100,100, 75,75);
+      most_watched.removeAll();
+      most_watched.revalidate();
+      most_watched.add(ViewsList);
+      most_watched.revalidate();
+
+      DefaultListModel<String> l4a = new DefaultListModel<>(); 
+      l4a.addElement("Recently Watched Videos"); //top 5 in numvotes in titles matching the search
+    }
+
+    public void userButton(FHold my_Fhold) {
+      String loginValue = user_field.getText();
+      String searchRecent = "SELECT titleID FROM customer_ratings WHERE customerID LIKE \'%" + loginValue + "%\' ORDER BY date DESC;";
+      String watchHistoryQuery = my_Fhold.call_query(searchRecent);
+      String[] watchHistory = Arrays.copyOfRange(watchHistoryQuery.split("/"),0,10);
+
+      DefaultListModel<String> l4a = new DefaultListModel<>(); 
+      l4a.addElement("Recently Watched"); //top 5 in numvotes in titles matching the search
+      for (int i = 0; i < watchHistory.length; i++) {
+        String titlessearch = "SELECT originalTitle FROM titles WHERE titles.titleId LIKE \'%" + watchHistory[i] + "%\' ORDER BY Year DESC;";
+        String titlesQuery = my_Fhold.call_query(titlessearch);
+        String[] titlesCall = Arrays.copyOfRange(titlesQuery.split("/"),0,10);
+        l4a.addElement(titlesCall[0]);
       }
       
-      searchedVec.add(title);
-      if (searchedVec.size() == 9) {
-        searchedVec.remove(0);
-      }
-      Collections.reverse(searchedVec);
+      // Recently Watched/searched (it updates everytime the user searches for a title)
+      JList<String> recentlist = new JList<>(l4a);  
+      recently_watched.setBounds(100,100, 75,75);
+      recently_watched.removeAll();
+      recently_watched.revalidate();
+      recently_watched.add(recentlist);
+      recently_watched.revalidate();
+
+
+      
     }
 
     public void searchButton(FHold my_Fhold){//u gotta pass it in because aparently this does not share the class scope
@@ -260,14 +407,12 @@ public class ViewerGUI extends JFrame implements ActionListener{
       //get string from JTextField search_field;
       String searchValue = search_field.getText();
       
-      //adds to history
-      addToWatchHistory(searchValue);
 
       
       String searchQuery = "SELECT originalTitle FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY averageRating DESC;"; 
       //String searchQuery2 = "SELECT averageRating FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY averageRating DESC;"; 
       String searchQuery3 = "SELECT originalTitle FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY views DESC;"; 
-
+      
 
       //generate queries
 
@@ -275,9 +420,9 @@ public class ViewerGUI extends JFrame implements ActionListener{
      // String top_rated_query_R = my_Fhold.call_query(searchQuery2);//ratings
       String top_rated_query_V = my_Fhold.call_query(searchQuery3);//Views
 
-      String[] top_rated_querylist = Arrays.copyOfRange(top_rated_query.split("/"),0,4); 
+      String[] top_rated_querylist = Arrays.copyOfRange(top_rated_query.split("/"),0,10); 
       //String[] top_rated_querylist_R = Arrays.copyOfRange(top_rated_query_R.split("/"),0,4);//ratings
-      String[] top_rated_querylist_V = Arrays.copyOfRange(top_rated_query_V.split("/"),0,4);//votes
+      String[] top_rated_querylist_V = Arrays.copyOfRange(top_rated_query_V.split("/"),0,10);//votes
       
       
       
@@ -286,10 +431,17 @@ public class ViewerGUI extends JFrame implements ActionListener{
 
       DefaultListModel<String> l2a = new DefaultListModel<>(); 
       l2a.addElement("TOP RATED"); //top 5 in numvotes in titles matching the search
+      /*
       l2a.addElement(top_rated_querylist[0]);  
       l2a.addElement(top_rated_querylist[1]);  
       l2a.addElement(top_rated_querylist[2]);  
       l2a.addElement(top_rated_querylist[3]);  
+*/
+      
+      for (int i = 0; i < top_rated_querylist.length; i++) {
+        l2a.addElement(top_rated_querylist[i]);
+      }
+
       JList<String> top_ratedlist2 = new JList<>(l2a);  
       top_ratedlist2.setBounds(100,100, 75,75);
       top_rated.removeAll();
@@ -302,10 +454,17 @@ public class ViewerGUI extends JFrame implements ActionListener{
    
       DefaultListModel<String> l3a = new DefaultListModel<>(); 
       l3a.addElement("Most Watched"); //top 5 in numvotes in titles matching the search
+      /*
       l3a.addElement(top_rated_querylist_V[0]);  
       l3a.addElement(top_rated_querylist_V[1]);  
       l3a.addElement(top_rated_querylist_V[2]);  
       l3a.addElement(top_rated_querylist_V[3]);  
+      */
+
+      for (int i = 0; i < top_rated_querylist_V.length; i++) {
+        l3a.addElement(top_rated_querylist_V[i]);
+      }
+
       JList<String> ViewsList = new JList<>(l3a);  
       most_watched.setBounds(100,100, 75,75);
       most_watched.removeAll();
@@ -313,44 +472,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
       most_watched.add(ViewsList);
       most_watched.revalidate();
 
-      // Recently Watched/searched (it updates everytime the user searches for a title)
-      DefaultListModel<String> l4a = new DefaultListModel<>(); 
-      l4a.addElement("Recently Watched"); //top 5 in numvotes in titles matching the search
-      l4a.addElement(searchedVec.get(0));  
-      if (searchedVec.size() > 1) {
-        l4a.addElement(searchedVec.get(1));
-      }
-      if (searchedVec.size() > 2) {
-        l4a.addElement(searchedVec.get(2));
-      }
-      if (searchedVec.size() > 3) {
-        l4a.addElement(searchedVec.get(3));
-      }
-      if (searchedVec.size() > 4) {
-        l4a.addElement(searchedVec.get(4));
-      }
-      if (searchedVec.size() > 5) {
-        l4a.addElement(searchedVec.get(5));
-      }
-      if (searchedVec.size() > 6) {
-        l4a.addElement(searchedVec.get(6));
-      }
-      if (searchedVec.size() > 7) {
-        l4a.addElement(searchedVec.get(7));
-      } 
-      if (searchedVec.size() > 8) {
-        l4a.addElement(searchedVec.get(9));
-      }
-        
-        
-        
-      //l4a.addElement(rand[4]); 
-      JList<String> recentlist = new JList<>(l4a);  
-      recently_watched.setBounds(100,100, 75,75);
-      recently_watched.removeAll();
-      recently_watched.revalidate();
-      recently_watched.add(recentlist);
-      recently_watched.revalidate();
+      
       //fill in the thing
       
       
