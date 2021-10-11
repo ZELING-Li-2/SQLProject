@@ -139,12 +139,17 @@ public class ViewerGUI extends JFrame implements ActionListener{
         //main_panel.add(text);
 
         // Adding everything to the frame
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         f.setLayout(new BorderLayout(50, 15));
         f.add(mb);f.add(main_panel, BorderLayout.CENTER);    
         f.setJMenuBar(mb);  
         f.setSize(1200,700);  
         setLocationRelativeTo(null);  
-        f.setVisible(true);    
+        f.setVisible(true);
+        
+        // Change Icon
+        ImageIcon image = new ImageIcon("Team Icon.png");
+        f.setIconImage(image.getImage());
     }
     // Actions when events is detected     
     public void actionPerformed(ActionEvent e) {    
@@ -409,20 +414,26 @@ public class ViewerGUI extends JFrame implements ActionListener{
       
 
       
-      String searchQuery = "SELECT originalTitle FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY averageRating DESC;"; 
+      String searchQuery = "SELECT originalTitle FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY averageRating DESC;";
+      String searchQueryYear = "SELECT Year FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY averageRating DESC;";
       //String searchQuery2 = "SELECT averageRating FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY averageRating DESC;"; 
-      String searchQuery3 = "SELECT originalTitle FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY views DESC;"; 
-      
+      String searchQuery3 = "SELECT originalTitle FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY views DESC;";
+      String searchQuery3Year = "SELECT Year FROM titles WHERE originalTitle LIKE \'%" + searchValue + "%\' ORDER BY views DESC;"; 
+
 
       //generate queries
 
-      String top_rated_query = my_Fhold.call_query(searchQuery);//query the text 
+      String top_rated_query = my_Fhold.call_query(searchQuery);//query the text
+      String top_rated_query_year = my_Fhold.call_query(searchQueryYear);
      // String top_rated_query_R = my_Fhold.call_query(searchQuery2);//ratings
       String top_rated_query_V = my_Fhold.call_query(searchQuery3);//Views
+      String top_rated_query_V_year = my_Fhold.call_query(searchQuery3Year);
 
       String[] top_rated_querylist = Arrays.copyOfRange(top_rated_query.split("/"),0,10); 
+      String[] top_rated_querylist_year = Arrays.copyOfRange(top_rated_query_year.split("/"), 0, 10);
       //String[] top_rated_querylist_R = Arrays.copyOfRange(top_rated_query_R.split("/"),0,4);//ratings
       String[] top_rated_querylist_V = Arrays.copyOfRange(top_rated_query_V.split("/"),0,10);//votes
+      String[] top_rated_querylist_V_year = Arrays.copyOfRange(top_rated_query_V_year.split("/"),0,10);//votes
       
       
       
@@ -439,7 +450,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
 */
       
       for (int i = 0; i < top_rated_querylist.length; i++) {
-        l2a.addElement(top_rated_querylist[i]);
+        l2a.addElement(top_rated_querylist[i] + " (" + top_rated_querylist_year[i] + ")");
       }
 
       JList<String> top_ratedlist2 = new JList<>(l2a);  
@@ -462,7 +473,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
       */
 
       for (int i = 0; i < top_rated_querylist_V.length; i++) {
-        l3a.addElement(top_rated_querylist_V[i]);
+        l3a.addElement(top_rated_querylist_V[i] + " (" + top_rated_querylist_V_year[i] + ")");
       }
 
       JList<String> ViewsList = new JList<>(l3a);  
