@@ -19,7 +19,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
     Boolean loggedin = false;
     String loginValue;
     TextField text = new TextField(15), most_watch = new TextField(15), top_rate = new TextField(20), recent_watch = new TextField(15);
-    private JPanel main_panel,choice_panel, buff_field, most_watched, top_rated, recently_watched;
+    private JPanel main_panel,choice_panel, buff_field, most_watched, top_rated, recently_watched, recommendation;
     private int numClicks = 0;
     ViewerGUI(){
         /* NAVBAR SECTION*/
@@ -91,7 +91,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
         //main_panel = new JPanel();  // Main container
         // main_panel.setBackground(Color.white);
         choice_panel = new JPanel();
-        choice_panel.setLayout(new GridLayout(3, 1));
+        choice_panel.setLayout(new GridLayout(1, 1));
         choice_panel.setBackground(Color.white);
         choice_panel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         choice_panel.setPreferredSize(new Dimension(500,750));
@@ -102,6 +102,20 @@ public class ViewerGUI extends JFrame implements ActionListener{
         main_panel.setBackground(Color.white);
         main_panel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
         main_panel.setPreferredSize(new Dimension(750,750));
+
+        // recommendation
+        recommendation = new JPanel();
+        TitledBorder recommendation_list = new TitledBorder("Recommendations:");
+        recommendation_list.setTitleJustification(TitledBorder.CENTER);
+        recommendation_list.setTitlePosition(TitledBorder.TOP);
+
+        DefaultListModel<String> rl = new DefaultListModel<>();
+        rl.addElement("Recommendations:");
+        rl.addElement("Login to show recommendation list");
+        JList<String> recommendationList = new JList<>(rl);
+        recommendationList.setBounds(100,100,75,75);
+        recommendation.add(recommendationList);
+
         // Most watched movie
         most_watched = new JPanel();
         TitledBorder title_most_watched = new TitledBorder("Most Watched");
@@ -153,6 +167,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
         main_panel.add(recently_watched);
         //main_panel.add(recent_watch);
         //main_panel.add(text);
+        choice_panel.add(recommendation);
 
         // Adding everything to the frame
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
