@@ -513,28 +513,24 @@ public class ViewerGUI extends JFrame implements ActionListener{
           return;
         } */
         String startVal = start_date_field.getText();
-        String endVal = start_date_field.getText();
+        String endVal = end_date_field.getText();
 
         if (!loggedin) {
           return;
         }
-        DefaultListModel<String> l4d = new DefaultListModel<>(); 
-        l4d.addElement("Recently Watched"); //top 5 in numvotes in titles matching the search
+        
         String searchRecent = "SELECT titleID FROM customer_ratings WHERE customerID = \'" + loginValue + "\' and date BETWEEN \'" + startVal + "\' and \'" + endVal+ "\' ORDER BY date DESC;";
         String watchHistoryQuery = my_Fhold.call_query(searchRecent);
         String[] watchHistory = Arrays.copyOfRange(watchHistoryQuery.split("/"),0,10);
-        for (int i = 0; i < watchHistory.length; i++) {
-          l4d.addElement(watchHistory[i]);
-        }
-        /*
-        DefaultListModel<String> l4a = new DefaultListModel<>(); 
-        l4a.addElement("Recently Watched"); //top 5 in numvotes in titles matching the search
+        
+        DefaultListModel<String> l4d = new DefaultListModel<>(); 
+        l4d.addElement("Recently Watched from: " + startVal + " through " + endVal); //top 5 in numvotes in titles matching the search
         for (int i = 0; i < watchHistory.length; i++) {
           String titlessearch = "SELECT originalTitle FROM titles WHERE titles.titleId = \'" + watchHistory[i] + "\' ORDER BY Year DESC;";
           String titlesQuery = my_Fhold.call_query(titlessearch);
           String[] titlesCall = Arrays.copyOfRange(titlesQuery.split("/"),0,10);
-          l4a.addElement(titlesCall[0]);
-        }*/
+          l4d.addElement(titlesCall[0]);
+        }
         
         // Recently Watched/searched (it updates everytime the user searches for a title)
         JList<String> recentlist = new JList<>(l4d);  
