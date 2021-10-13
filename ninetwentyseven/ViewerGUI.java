@@ -5,7 +5,7 @@ import java.awt.*;
 import javax.swing.border.TitledBorder;
 import java.util.Arrays;
 import java.util.Vector;
-import java.util.Collections;
+
 
 
 public class ViewerGUI extends JFrame implements ActionListener{    
@@ -13,10 +13,13 @@ public class ViewerGUI extends JFrame implements ActionListener{
     JMenuBar mb;    
     JMenu Home, Shows, Movies, Shorts, Videos; 
     JMenuItem home_, show_, movie_, short_, video_;
-    JButton team_logo, search_button, user_button;
-    JTextField search_field, user_field;
+    JButton team_logo, search_button, user_button, date_button;
+    JTextField search_field, user_field, start_date_field, end_date_field;
+    Vector<Vector<String>> vec;
+    Boolean loggedin = false;
+    String loginValue;
     TextField text = new TextField(15), most_watch = new TextField(15), top_rate = new TextField(20), recent_watch = new TextField(15);
-    private JPanel main_panel, buff_field, most_watched, top_rated, recently_watched;
+    private JPanel main_panel,choice_panel, buff_field, most_watched, top_rated, recently_watched;
     private int numClicks = 0;
     ViewerGUI(){
         /* NAVBAR SECTION*/
@@ -28,9 +31,16 @@ public class ViewerGUI extends JFrame implements ActionListener{
         search_button = new JButton("Search");
         search_field = new JTextField("Search Movies/Shows");
         search_field.setEditable(true);  
+
         user_button = new JButton("Login");
         user_field = new JTextField("Login by inputting ID");
         user_field.setEditable(true);
+
+        date_button = new JButton("Search History");
+        start_date_field = new JTextField("Input start date (xxxx-xx-xx)");
+        start_date_field.setEditable(true);
+        end_date_field = new JTextField("Input end date (xxxx-xx-xx)");
+        end_date_field.setEditable(true);
 
          // The menu items (inside the menu list)
         f = new JFrame("ZAS VIEWER GUI");    
@@ -49,6 +59,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
         video_.addActionListener(e->videoButton(my_Fhold));
         search_button.addActionListener(e->searchButton(my_Fhold));
         user_button.addActionListener(e->userButton(my_Fhold));
+        date_button.addActionListener(e->dateButton(my_Fhold));
         
 
         // team_logo.addActionListener(this);    
@@ -72,20 +83,25 @@ public class ViewerGUI extends JFrame implements ActionListener{
         mb.add(Videos);mb.add(Box.createHorizontalGlue());
         mb.add(search_field);mb.add(search_button);  
         mb.add(user_field);mb.add(user_button);
+        mb.add(start_date_field);mb.add(end_date_field);mb.add(date_button);
         mb.revalidate();
 
         /* MAIN CONTENT SECTION*/
         buff_field = new JPanel();
-        main_panel = new JPanel();  // Main container
+        //main_panel = new JPanel();  // Main container
         // main_panel.setBackground(Color.white);
-
+        choice_panel = new JPanel();
+        choice_panel.setLayout(new GridLayout(3, 1));
+        choice_panel.setBackground(Color.white);
+        choice_panel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        choice_panel.setPreferredSize(new Dimension(500,750));
         // Panels
         main_panel = new JPanel(); // main panel
         main_panel.setLayout(new GridLayout(3, 1));
-        //main_panel.add(new JLabel("Main Panel"));
+        //main_panel.add(new JLabel("ZAS"));
         main_panel.setBackground(Color.white);
         main_panel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
-
+        main_panel.setPreferredSize(new Dimension(750,750));
         // Most watched movie
         most_watched = new JPanel();
         TitledBorder title_most_watched = new TitledBorder("Most Watched");
@@ -140,10 +156,10 @@ public class ViewerGUI extends JFrame implements ActionListener{
 
         // Adding everything to the frame
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        f.setLayout(new BorderLayout(50, 15));
-        f.add(mb);f.add(main_panel, BorderLayout.CENTER);    
+        f.setLayout(new BorderLayout(450, 150));
+        f.add(mb);f.add(main_panel, BorderLayout.EAST);f.add(choice_panel, BorderLayout.WEST);
         f.setJMenuBar(mb);  
-        f.setSize(1200,700);  
+        f.setSize(1250,800);  
         setLocationRelativeTo(null);  
         f.setVisible(true);
         
@@ -196,7 +212,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
       String query2 = my_FHold.call_query(searchTop10Rated);
       
       String[] top10Watched = Arrays.copyOfRange(query.split("/"),0,10);
-      String[] top10Rated = Arrays.copyOfRange(query.split("/"),0,10);
+      String[] top10Rated = Arrays.copyOfRange(query2.split("/"),0,10);
 
       DefaultListModel<String> l2h = new DefaultListModel<>(); 
       l2h.addElement("Top Rated Titles"); //top 5 in numvotes in titles matching the search
@@ -235,7 +251,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
       String query2 = my_FHold.call_query(searchTop10Rated);
       
       String[] top10Watched = Arrays.copyOfRange(query.split("/"),0,10);
-      String[] top10Rated = Arrays.copyOfRange(query.split("/"),0,10);
+      String[] top10Rated = Arrays.copyOfRange(query2.split("/"),0,10);
 
       DefaultListModel<String> l2m = new DefaultListModel<>(); 
       l2m.addElement("Top Rated Movies"); //top 5 in numvotes in titles matching the search
@@ -274,7 +290,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
       String query2 = my_FHold.call_query(searchTop10Rated);
       
       String[] top10Watched = Arrays.copyOfRange(query.split("/"),0,10);
-      String[] top10Rated = Arrays.copyOfRange(query.split("/"),0,10);
+      String[] top10Rated = Arrays.copyOfRange(query2.split("/"),0,10);
 
       DefaultListModel<String> l2sw = new DefaultListModel<>(); 
       l2sw.addElement("Top Rated Shows"); //top 5 in numvotes in titles matching the search
@@ -312,7 +328,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
       String query2 = my_FHold.call_query(searchTop10Rated);
       
       String[] top10Watched = Arrays.copyOfRange(query.split("/"),0,10);
-      String[] top10Rated = Arrays.copyOfRange(query.split("/"),0,10);
+      String[] top10Rated = Arrays.copyOfRange(query2.split("/"),0,10);
 
       DefaultListModel<String> l2sh = new DefaultListModel<>(); 
       l2sh.addElement("Top Rated Shorts"); //top 5 in numvotes in titles matching the search
@@ -350,7 +366,7 @@ public class ViewerGUI extends JFrame implements ActionListener{
       String query2 = my_FHold.call_query(searchTop10Rated);
       
       String[] top10Watched = Arrays.copyOfRange(query.split("/"),0,10);
-      String[] top10Rated = Arrays.copyOfRange(query.split("/"),0,10);
+      String[] top10Rated = Arrays.copyOfRange(query2.split("/"),0,10);
 
       DefaultListModel<String> l2v = new DefaultListModel<>(); 
       l2v.addElement("Top Rated Videos"); //top 5 in numvotes in titles matching the search
@@ -381,15 +397,15 @@ public class ViewerGUI extends JFrame implements ActionListener{
     }
 
     public void userButton(FHold my_Fhold) {
-      String loginValue = user_field.getText();
-      String searchRecent = "SELECT titleID FROM customer_ratings WHERE customerID LIKE \'%" + loginValue + "%\' ORDER BY date DESC;";
+      loginValue = user_field.getText();
+      String searchRecent = "SELECT titleID FROM customer_ratings WHERE customerID = \'" + loginValue + "\' ORDER BY date DESC;";
       String watchHistoryQuery = my_Fhold.call_query(searchRecent);
       String[] watchHistory = Arrays.copyOfRange(watchHistoryQuery.split("/"),0,10);
-
+      loggedin = true;
       DefaultListModel<String> l4a = new DefaultListModel<>(); 
       l4a.addElement("Recently Watched"); //top 5 in numvotes in titles matching the search
       for (int i = 0; i < watchHistory.length; i++) {
-        String titlessearch = "SELECT originalTitle FROM titles WHERE titles.titleId LIKE \'%" + watchHistory[i] + "%\' ORDER BY Year DESC;";
+        String titlessearch = "SELECT originalTitle FROM titles WHERE titles.titleId = \'" + watchHistory[i] + "\' ORDER BY Year DESC;";
         String titlesQuery = my_Fhold.call_query(titlessearch);
         String[] titlesCall = Arrays.copyOfRange(titlesQuery.split("/"),0,10);
         l4a.addElement(titlesCall[0]);
@@ -489,12 +505,59 @@ public class ViewerGUI extends JFrame implements ActionListener{
       
   }
 
+    public void dateButton(FHold my_Fhold) {
+      try {
+        /*int startVal = Integer.parseInt(start_date_field.getText());
+        int endVal = Integer.parseInt(start_date_field.getText());
+        if (startVal > endVal) {
+          return;
+        } */
+        String startVal = start_date_field.getText();
+        String endVal = start_date_field.getText();
+
+        if (!loggedin) {
+          return;
+        }
+        DefaultListModel<String> l4d = new DefaultListModel<>(); 
+        l4d.addElement("Recently Watched"); //top 5 in numvotes in titles matching the search
+        String searchRecent = "SELECT titleID FROM customer_ratings WHERE customerID = \'" + loginValue + "\' and date BETWEEN \'" + startVal + "\' and \'" + endVal+ "\' ORDER BY date DESC;";
+        String watchHistoryQuery = my_Fhold.call_query(searchRecent);
+        String[] watchHistory = Arrays.copyOfRange(watchHistoryQuery.split("/"),0,10);
+        for (int i = 0; i < watchHistory.length; i++) {
+          l4d.addElement(watchHistory[i]);
+        }
+        /*
+        DefaultListModel<String> l4a = new DefaultListModel<>(); 
+        l4a.addElement("Recently Watched"); //top 5 in numvotes in titles matching the search
+        for (int i = 0; i < watchHistory.length; i++) {
+          String titlessearch = "SELECT originalTitle FROM titles WHERE titles.titleId = \'" + watchHistory[i] + "\' ORDER BY Year DESC;";
+          String titlesQuery = my_Fhold.call_query(titlessearch);
+          String[] titlesCall = Arrays.copyOfRange(titlesQuery.split("/"),0,10);
+          l4a.addElement(titlesCall[0]);
+        }*/
+        
+        // Recently Watched/searched (it updates everytime the user searches for a title)
+        JList<String> recentlist = new JList<>(l4d);  
+        recently_watched.setBounds(100,100, 75,75);
+        recently_watched.removeAll();
+        recently_watched.revalidate();
+        recently_watched.add(recentlist);
+        recently_watched.revalidate();
+
+      } catch (Exception e) {
+        return;
+      }
+      
+      
+    }
 
 
 
     // Main Function
     public static void main(String[] args) {    
-        new ViewerGUI();    
+       
+        new ViewerGUI();     
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }    
     
 }    
